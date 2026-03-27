@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, throwError, timer } from 'rxjs';
 import { tap, catchError, switchMap } from 'rxjs/operators';
 import { CookieService } from './cookie.service';
-import { AuthConfigService } from './auth-config.service';
+import { ApiConfigService } from '../api/api-config.service';
 
 export interface LoginRequest {
   username: string;
@@ -25,7 +25,8 @@ export class AuthService {
   private http = inject(HttpClient);
   private cookieService = inject(CookieService);
   private router = inject(Router);
-  private authConfig = inject(AuthConfigService);
+  private apiConfig = inject(ApiConfigService)
+  // private authConfig = inject(AuthConfigService);
   
   isAuthenticated$ = new BehaviorSubject<boolean>(this.hasValidToken());
   currentUser$ = new BehaviorSubject<string | null>(this.getUserFromToken());
@@ -38,38 +39,10 @@ export class AuthService {
   }
 
   /**
-   * Set the login URL (configurable)
-   */
-  setLoginUrl(url: string): void {
-    this.authConfig.setLoginUrl(url);
-  }
-
-  /**
-   * Get the current login URL
-   */
-  getLoginUrl(): string {
-    return this.authConfig.loginUrl();
-  }
-
-  /**
-   * Set the refresh URL
-   */
-  setRefreshUrl(url: string): void {
-    this.authConfig.setRefreshUrl(url);
-  }
-
-  /**
-   * Get the current refresh URL
-   */
-  getRefreshUrl(): string {
-    return this.authConfig.refreshUrl();
-  }
-
-  /**
    * Login with username and password
    */
   login(username: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(this.getLoginUrl(), {
+    return this.http.post<AuthResponse>(this.apiConfig.loginUrl(), {
       username,
       password
     }).pipe(
@@ -124,7 +97,7 @@ export class AuthService {
       return throwError(() => new Error('No token to refresh'));
     }
 
-    return this.http.post<AuthResponse>(this.getRefreshUrl(), {
+    return this.http.post<AuthResponse>(this.apiConfig.refreshUrl(), {
       token
     }).pipe(
       tap(response => {
@@ -155,7 +128,7 @@ export class AuthService {
     
     this.cookieService.set('auth_token', token, {
       expires: expirationDate,
-      secure: this.authConfig.useSecureCookies(),
+      secure: this.apiConfig.useSecureCookies(),
       sameSite: 'Strict'
     });
   }

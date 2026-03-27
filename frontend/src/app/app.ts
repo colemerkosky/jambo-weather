@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './auth/auth.service';
+import { ApiConfigService } from './api/api-config.service';
+import { environment } from '../environments/environment';
 
 /**
  * Root application component
@@ -16,18 +18,10 @@ import { AuthService } from './auth/auth.service';
 export class App {
   protected readonly title = 'forecast-app';
   private authService = inject(AuthService);
+  private apiConfigService = inject(ApiConfigService)
 
   constructor() {
-    // CONFIGURE YOUR AUTHENTICATION ENDPOINTS HERE
-    // Uncomment and modify these URLs to point to your backend
-
-    // Example for production:
-    this.authService.setLoginUrl('https://localhost:7241/api/auth/login');
-    // this.authService.setRefreshUrl('https://api.yourdomain.com/auth/refresh');
-    
-    // For local development, the defaults are:
-    // Login URL: http://localhost:3000/auth/login
-    // Refresh URL: http://localhost:3000/auth/login/refresh
+    this.apiConfigService.setBaseUrl(environment.baseUrl)
   }
 }
 

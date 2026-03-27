@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, Injectable, signal } from '@angular/core';
 
 /**
  * Configuration service for authentication settings
@@ -7,18 +7,24 @@ import { Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthConfigService {
+export class ApiConfigService {
+  /**
+   * The base server URL for API data calls
+   * Default: http://localhost:3000
+   */
+  baseUrl = signal('https://localhost:7421/api');
+
   /**
    * The URL for the login endpoint
    * Default: http://localhost:3000/auth/login
    */
-  loginUrl = signal('http://localhost:3000/auth/login');
+  loginUrl = computed(() => this.baseUrl() + "/auth/login");
 
   /**
-   * The URL for the token refresh endpoint
-   * Default: http://localhost:3000/auth/login/refresh
+   * The URL for the login endpoint
+   * Default: http://localhost:3000/auth/login
    */
-  refreshUrl = signal('http://localhost:3000/auth/login/refresh');
+  refreshUrl = computed(() => this.baseUrl() + "/auth/refresh");
 
   /**
    * Whether to use secure cookies (should be true in production)
@@ -27,17 +33,10 @@ export class AuthConfigService {
   useSecureCookies = signal(true);
 
   /**
-   * Set the login URL
+   * Set the base URL
    */
-  setLoginUrl(url: string): void {
-    this.loginUrl.set(url);
-  }
-
-  /**
-   * Set the refresh URL
-   */
-  setRefreshUrl(url: string): void {
-    this.refreshUrl.set(url);
+  setBaseUrl(url: string): void {
+    this.baseUrl.set(url);
   }
 
   /**

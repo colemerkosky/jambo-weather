@@ -1,16 +1,28 @@
+@let user = currentUser$ | async;
+
 <div class="home-container">
   <nav class="navbar">
     <div class="navbar-content">
       <h1>Weather Forecast</h1>
       <div class="user-section">
-        <span class="username" *ngIf="(currentUser$ | async) as user">{{ user }}</span>
+        @if(user){
+          <span class="username">{{ user }}</span>
+        }
         <button class="btn btn-logout" (click)="logout()">Logout</button>
       </div>
     </div>
   </nav>
 
   <main class="main-content">
-    <h2>Welcome to the Weather Forecast App</h2>
-    <p>You are successfully logged in. Add your weather forecast content here.</p>
+    <h2>Weather Forecast + City Data</h2>
+    @if(loading()){
+      <div class="status-message">Loading city data...</div>
+    }
+    @else if(!loading() && error()) {
+      <div class="status-message status-error">City data could not be loaded</div>
+    }
+    @else if(cityData(); as cityData){
+      <app-city-data [cityData]="cityData"></app-city-data>
+    }
   </main>
 </div>
