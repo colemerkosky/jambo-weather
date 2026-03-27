@@ -11,9 +11,15 @@ export interface LoginRequest {
   password: string;
 }
 
+export interface RefreshRequest {
+  refreshToken: string;
+}
+
 export interface AuthResponse {
   token: string;
-  expiresIn?: number; // in seconds
+  refreshToken: string;
+  expiresAtUtc: number; // in seconds
+  refreshTokenExpiresAtUtc: number; // in seconds
 }
 
 @Injectable({
@@ -31,32 +37,34 @@ export class AuthService {
   isAuthenticated$ = new BehaviorSubject<boolean>(this.hasValidToken());
   currentUser$ = new BehaviorSubject<string | null>(this.getUserFromToken());
 
-  constructor() {
-    // Setup JWT refresh on service initialization
-    if (this.hasValidToken()) {
-      this.scheduleTokenRefresh();
-    }
-  }
-
   /**
    * Login with username and password
    */
   login(username: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(this.apiConfig.loginUrl(), {
+    const request: LoginRequest = {
+      username, password
+    }
+
+    return this.http.post<AuthResponse>(this.apiConfig.loginUrl(), <LoginRequest>{
       username,
       password
     }).pipe(
       tap(response => {
-        this.storeToken(response.token, response.expiresIn);
-        this.isAuthenticated$.next(true);
-        this.currentUser$.next(username);
-        this.scheduleTokenRefresh(response.expiresIn);
+        this.handleSuccessfulAuthRequest(response)
       }),
       catchError(error => {
         console.error('Login failed:', error);
         return throwError(() => error);
       })
     );
+  }
+
+  handleSuccessfulAuthRequest(response: AuthResponse): void {
+    this.storeAuthToken(response.token, response.expiresAtUtc);
+    this.storeRefreshToken(response.refreshToken, response.refreshTokenExpiresAtUtc);
+    this.isAuthenticated$.next(true);
+    this.currentUser$.next(this.getUserFromToken())
+    this.scheduleTokenRefresh(response.expiresAtUtc);
   }
 
   /**
@@ -79,6 +87,14 @@ export class AuthService {
     return this.cookieService.get('auth_token');
   }
 
+    /**
+   * Get the stored JWT token
+   */
+  getRefreshToken(): string | null {
+    return this.cookieService.get('refresh_token');
+  }
+
+
   /**
    * Check if user has a valid token
    */
@@ -97,12 +113,16 @@ export class AuthService {
       return throwError(() => new Error('No token to refresh'));
     }
 
-    return this.http.post<AuthResponse>(this.apiConfig.refreshUrl(), {
-      token
+    const refresh_token = this.getRefreshToken();
+    if (!token) {
+      return throwError(() => new Error('No refresh token stored'));
+    }
+
+    return this.http.post<AuthResponse>(this.apiConfig.refreshUrl(), <RefreshRequest> {
+      refreshToken: token
     }).pipe(
       tap(response => {
-        this.storeToken(response.token, response.expiresIn);
-        this.scheduleTokenRefresh(response.expiresIn);
+        this.handleSuccessfulAuthRequest(response)
       }),
       catchError(error => {
         console.error('Token refresh failed:', error);
@@ -112,10 +132,19 @@ export class AuthService {
     );
   }
 
+
+  private storeAuthToken(token: string, expiresIn?: number): void {
+    this.storeExpiringCookie("auth_token", token, expiresIn)
+  }
+
+  private storeRefreshToken(refreshToken: string, expiresIn?: number): void {
+    this.storeExpiringCookie("refresh_token", refreshToken, expiresIn)
+  }
+
   /**
    * Store token in cookie with expiration
    */
-  private storeToken(token: string, expiresIn?: number): void {
+  private storeExpiringCookie(cookie: string, value: string, expiresIn?: number): void {
     // Store in cookie (httpOnly would be ideal but requires backend support)
     // We're storing in a secure cookie with expiration
     const expirationDate = new Date();
@@ -126,7 +155,7 @@ export class AuthService {
       expirationDate.setHours(expirationDate.getHours() + 1);
     }
     
-    this.cookieService.set('auth_token', token, {
+    this.cookieService.set(cookie, value, {
       expires: expirationDate,
       secure: this.apiConfig.useSecureCookies(),
       sameSite: 'Strict'
@@ -193,21 +222,15 @@ export class AuthService {
   /**
    * Schedule token refresh before expiration
    */
-  private scheduleTokenRefresh(expiresIn?: number): void {
+  private scheduleTokenRefresh(expiresIn: number): void {
     // Clear any existing timeout
     if (this.refreshRefreshInterval) {
       clearTimeout(this.refreshRefreshInterval);
     }
 
-    const token = this.getToken();
-    if (!token) return;
-
     try {
-      const payload = this.decodeToken(token);
-      if (!payload.exp) return;
-
-      const currentTime = Math.floor(Date.now() / 1000);
-      const timeUntilExpiry = (payload.exp - currentTime) * 1000; // convert to ms
+      const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+      const timeUntilExpiry = (expiresIn - currentTimeInSeconds) * 1000; // convert to ms
 
       // Refresh at 80% of token lifetime or 1 minute before expiry, whichever is later
       const refreshBuffer = Math.max(60 * 1000, timeUntilExpiry * 0.2);

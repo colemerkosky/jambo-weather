@@ -1,0 +1,18 @@
+<div class="dropdown-container">
+  <div class="dropdown-header" (click)="toggleDropdown()">
+    <span class="selected-text">{{ getSelectedCityName() }}</span>
+    <span class="dropdown-arrow" [class.open]="isOpen">▼</span>
+  </div>
+
+  <div class="dropdown-options" *ngIf="isOpen">
+    <div class="dropdown-option" [class.selected]="selectedCityId() === 'current'" (click)="selectCity('current')">
+      {{ geolocationCityOptionText() }}
+    </div>
+
+    @for(city of cities(); track city.id) {
+        <div class="dropdown-option" [class.selected]="selectedCityId() === city.id" (click)="selectCity(city.id)">
+            {{ city.displayName }}
+        </div>
+    }
+  </div>
+</div>

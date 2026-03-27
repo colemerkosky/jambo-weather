@@ -41,7 +41,7 @@
 
 .main-content {
   flex: 1;
-  max-width: 1200px;
+  max-width: 740px;
   margin: 0 auto;
   padding: 40px 20px;
   width: 100%;
@@ -60,6 +60,16 @@
 .main-content p {
   color: #666;
   line-height: 1.6;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  max-width: 740px;
+  margin: 20px auto;
+  color: #202020;
 }
 
 .btn-logout {

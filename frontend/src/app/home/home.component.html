@@ -15,14 +15,18 @@
 
   <main class="main-content">
     <h2>Weather Forecast + City Data</h2>
-    @if(loading()){
-      <div class="status-message">Loading city data...</div>
-    }
-    @else if(!loading() && error()) {
-      <div class="status-message status-error">City data could not be loaded</div>
-    }
-    @else if(cityData(); as cityData){
-      <app-city-data [cityData]="cityData"></app-city-data>
-    }
+
+    <app-city-dropdown
+      [cities]="cities()"
+      [(selectedCityId)]="selectedCityId"
+      [geolocationCityName]="geolocationCityName()"
+      (citySelected)="onCitySelected($event)">
+    </app-city-dropdown>
+
+    <div class="card">
+      <app-city-data [selectedCityId]="selectedCityId()" (geolocationCityName)="setGeolocationCityName($event)"></app-city-data>
+    </div>
+    
+
   </main>
 </div>

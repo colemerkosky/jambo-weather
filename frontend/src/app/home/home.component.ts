@@ -4,12 +4,14 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { CityDataService } from '../city-data/city-data.service';
 import { CityDataComponent } from '../city-data/city-data.component';
+import { CityDropdownComponent } from '../city-dropdown/city-dropdown.component';
 import { CityData } from '../city-data/city-data.model';
+import { CityOption } from '../city-data/city.model';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, CityDataComponent],
+  imports: [CommonModule, CityDataComponent, CityDropdownComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -19,31 +21,37 @@ export class HomeComponent implements OnInit {
   private cityDataService = inject(CityDataService);
 
   currentUser$ = this.authService.currentUser$;
-  cityData = signal<CityData | null>(null);
-  loading = signal(true);
-  error = signal(true);
+  cities = signal<CityOption[]>([]);
+  selectedCityId = signal<string>('current');
+  geolocationCityName = signal<string>('');
 
   ngOnInit(): void {
-    this.loadCityData();
+    this.loadCityList()
   }
 
-  loadCityData(): void {
-    console.log("Loading!")
-    this.loading.set(true);
-    this.error.set(false);
-
-    this.cityDataService.getCurrentCityData().subscribe({
-      next: (data) => {
-        this.cityData.set(data);
-        this.loading.set(false);
-        this.error.set(false);
+  loadCityList(): void {
+    this.cityDataService.getCityList().subscribe({
+      next: (cityList) => {
+        // Convert the object to array of CityOption
+        const cityOptions: CityOption[] = Object.entries(cityList).map(([id, displayName]) => ({
+          id,
+          displayName
+        }));
+        this.cities.set(cityOptions);
       },
-      error: () => {
-        this.loading.set(false);
-        this.error.set(true);
-        this.cityData.set(null);
+      error: (err) => {
+        console.error('Failed to load city list:', err);
+        // City list is optional, so we don't set error state
       }
     });
+  }
+
+  setGeolocationCityName(cityName: string){
+    this.geolocationCityName.set(cityName);
+  }
+
+  onCitySelected(cityId: string): void {
+    this.selectedCityId.set(cityId);
   }
 
   logout(): void {

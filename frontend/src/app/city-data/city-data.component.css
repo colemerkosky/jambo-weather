@@ -1,36 +1,26 @@
-.city-data-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e0e0e0;
-  padding: 20px;
-  max-width: 740px;
-  margin: 20px auto;
-  color: #202020;
-}
-
-.city-data-card h2 {
+.city-data h2 {
   margin: 0px auto 12px;
   color: #333;
 }
 
-.city-data-card p {
+.city-data p {
   margin: 0 0 16px;
   color: #555;
 }
 
-.city-data-card dl {
+.city-data dl {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 8px 20px;
   margin: 16px 0 0;
 }
 
-.city-data-card dt {
+.city-data dt {
   font-weight: 700;
   color: #333;
 }
 
-.city-data-card dd {
+.city-data dd {
   margin: 0;
   color: #444;
 }
