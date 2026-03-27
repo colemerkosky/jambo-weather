@@ -1,0 +1,5 @@
+<Solution>
+  <Folder Name="/forecast-api/">
+    <Project Path="forecast-api/forecast-api.csproj" />
+  </Folder>
+</Solution>
