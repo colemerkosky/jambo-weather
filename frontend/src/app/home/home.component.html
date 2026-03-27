@@ -1,0 +1,16 @@
+<div class="home-container">
+  <nav class="navbar">
+    <div class="navbar-content">
+      <h1>Weather Forecast</h1>
+      <div class="user-section">
+        <span class="username" *ngIf="(currentUser$ | async) as user">{{ user }}</span>
+        <button class="btn btn-logout" (click)="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+    <h2>Welcome to the Weather Forecast App</h2>
+    <p>You are successfully logged in. Add your weather forecast content here.</p>
+  </main>
+</div>

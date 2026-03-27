@@ -1,0 +1,75 @@
+<div class="login-container">
+  <div class="login-card">
+    <h1>Login</h1>
+
+    <form [formGroup]="loginForm" (submit)="onSubmit()">
+      <!-- Username Field -->
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input
+          type="text"
+          id="username"
+          formControlName="username"
+          placeholder="Enter your username"
+          [disabled]="isLoading()"
+          class="form-control"
+          [class.is-invalid]="
+            username?.invalid && (username?.dirty || username?.touched)
+          "
+        />
+        @if(username?.invalid && (username?.dirty || username?.touched)) {
+            <div class="error-message">
+            @if(username?.hasError('required')) {
+                <span>Username is required</span>
+            }
+            @if(username?.hasError('minlength')) {
+                <span>Username must be at least 3 characters</span>
+            }
+            </div>
+        }
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          [disabled]="isLoading()"
+          class="form-control"
+          [class.is-invalid]="
+            password?.invalid && (password?.dirty || password?.touched)
+          "
+        />
+        @if(password?.invalid && (password?.dirty || password?.touched)) {
+            <div class="error-message">
+            @if(password?.hasError('required')){
+                <span>Password is required</span>
+            }
+            @if(password?.hasError('minlength')){
+                <span>Password must be at least 6 characters</span>
+            }
+            </div>
+        }
+      </div>
+
+      <!-- Error Message -->
+      @if(errorMessage()) {
+        <div class="alert alert-error">
+            {{ errorMessage() }}
+        </div>
+        }
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="loginForm.invalid || isLoading()"
+      >
+        <span>{{ !isLoading() ? "Login" : "Logging in..."}}</span>
+      </button>
+    </form>
+  </div>
+</div>
