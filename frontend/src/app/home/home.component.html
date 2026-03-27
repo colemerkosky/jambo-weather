@@ -24,6 +24,10 @@
     </app-city-dropdown>
 
     <div class="card">
+      <app-forecast [selectedCityId]="selectedCityId()"></app-forecast>
+    </div>
+
+    <div class="card">
       <app-city-data [selectedCityId]="selectedCityId()" (geolocationCityName)="setGeolocationCityName($event)"></app-city-data>
     </div>
     

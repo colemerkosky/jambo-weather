@@ -1,0 +1,20 @@
+<div class="forecast">
+  @if(loading()){
+      <div class="status-message">Loading forecast data...</div>
+  } @else if (error()){
+      <div class="status-message">Error retrieving forecast data</div>
+  } @else {
+      <h2>Forecast</h2>
+      <div class="forecast-row">
+          @for(forecast of forecasts(); track forecast.date) {
+              <div class="forecast-item">
+                  <div class="forecast-date">{{ formatDate(forecast.date) }}</div>
+                  <div class="forecast-temps">
+                    <span class="high">High: {{ forecast.highTemp }}°</span>
+                    <span class="low">Low: {{ forecast.lowTemp }}°</span>
+                  </div>
+              </div>
+          }
+      </div>
+  }
+</div>

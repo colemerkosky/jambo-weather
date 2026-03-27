@@ -5,13 +5,14 @@ import { AuthService } from '../auth/auth.service';
 import { CityDataService } from '../city-data/city-data.service';
 import { CityDataComponent } from '../city-data/city-data.component';
 import { CityDropdownComponent } from '../city-dropdown/city-dropdown.component';
+import { ForecastComponent } from '../forecast/forecast.component';
 import { CityData } from '../city-data/city-data.model';
 import { CityOption } from '../city-data/city.model';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, CityDataComponent, CityDropdownComponent],
+  imports: [CommonModule, CityDataComponent, CityDropdownComponent, ForecastComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

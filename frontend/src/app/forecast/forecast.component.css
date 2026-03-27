@@ -1,0 +1,44 @@
+.forecast h2 {
+  margin: 0 0 12px;
+  color: #333;
+}
+
+.forecast-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.forecast-item {
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 10px;
+  background: #f7f9fb;
+}
+
+.forecast-date {
+  font-weight: bold;
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.forecast-temps {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #444;
+}
+
+.forecast-temps .high {
+  color: #d9534f;
+  font-weight: 600;
+}
+
+.forecast-temps .low {
+  color: #5bc0de;
+  font-weight: 600;
+}
+
+.status-message {
+  color: #666;
+}

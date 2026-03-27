@@ -1,4 +1,4 @@
-import { Component, computed, input, inject, signal, output, SimpleChanges } from '@angular/core';
+import { Component, computed, input, inject, signal, output, model, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CityData } from './city-data.model';
 import { CityDataService } from './city-data.service';
@@ -67,7 +67,9 @@ export class CityDataComponent {
     }
 
     ngOnChanges({selectedCityId}: SimpleChanges){
-      this.loadCityData(selectedCityId.currentValue)
+      if(selectedCityId.currentValue != selectedCityId.previousValue && !selectedCityId.isFirstChange()){
+        this.loadCityData(selectedCityId.currentValue)
+      }
     }
 
     loadCityData(cityId: string){
