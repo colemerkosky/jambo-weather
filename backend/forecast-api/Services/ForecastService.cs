@@ -24,10 +24,8 @@ namespace forecast_api.Services
     /// A Forecast service backed by the OpenMeteo API
     /// See open-meteo.com for more info.
     /// </summary>
-    public class OpenMeteoForecastService : IForecastService
+    public class OpenMeteoForecastService(HttpClient client) : IForecastService
     {
-        private HttpClient client = new();
-
         public async Task<ForecastData?> GetForecastDataAsync(Geolocation geolocation, DateOnly date)
         {
             var coords = geolocation.Coordinates;

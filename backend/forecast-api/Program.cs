@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<HttpClient>();
+builder.Services.AddKeyedSingleton<HttpClient>("SingletonClient");
 builder.Services.AddScoped<IAuthenticationService, DummyAuthenticationService>();
 builder.Services.AddScoped<ICityService, InMemoryCityService>();
 builder.Services.AddSingleton<IIPGeolocationService, IPAPI_IPGeolocationService>();

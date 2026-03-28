@@ -20,10 +20,8 @@ namespace forecast_api.Services
     /// <summary>
     /// A CityDataService that is backed by Wikipedia
     /// </summary>
-    public class WikipediaCityDataService() : ICityDataService
+    public class WikipediaCityDataService(HttpClient client) : ICityDataService
     {
-        private readonly HttpClient client = new();
-
         public async Task<CityData?> GetCityDataAsync(Geolocation geolocation)
         {
             var encodedCityName = geolocation.CityName.Replace(" ", "_");

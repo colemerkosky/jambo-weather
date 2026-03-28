@@ -2,4 +2,8 @@
   <Folder Name="/forecast-api/">
     <Project Path="forecast-api/forecast-api.csproj" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="forecast-api.UnitTests/forecast-api.UnitTests.csproj" />
+    <Project Path="forecast-api.IntegrationTests/forecast-api.IntegrationTests.csproj" />
+  </Folder>
 </Solution>

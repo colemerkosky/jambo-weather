@@ -22,12 +22,8 @@ namespace forecast_api.Services
     /// An IPGeolocationService backed by the IPAPI service.
     /// See ipapi.co for more info
     /// </summary>
-    public class IPAPI_IPGeolocationService() : IIPGeolocationService
+    public class IPAPI_IPGeolocationService([FromKeyedServices("SingletonClient")] HttpClient client) : IIPGeolocationService
     {
-        
-
-        private readonly HttpClient client = new();
-
         public async Task<Geolocation?> GetGeolocationOfIpAddressAsync(String ipAddress)
         {
             var geolocation = GetCached(ipAddress);
