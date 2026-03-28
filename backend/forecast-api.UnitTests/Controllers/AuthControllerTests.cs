@@ -19,7 +19,7 @@ public class AuthControllerTests
         _authenticationServiceMock = new Mock<IAuthenticationService>();
         
         // Setup configuration mocks
-        _configurationMock.Setup(x => x["Jwt:Key"]).Returns("my_secret_key_that_is_long_enough_for_hmac");
+        _configurationMock.Setup(x => x["JWT_KEY"]).Returns("my_secret_key_that_is_long_enough_for_hmac");
         _configurationMock.Setup(x => x["Jwt:Issuer"]).Returns("forecast-api");
         _configurationMock.Setup(x => x["Jwt:Audience"]).Returns("forecast-api");
         

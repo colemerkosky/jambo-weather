@@ -94,7 +94,7 @@ namespace forecast_api.Controllers
 
         private string GenerateJwtToken(DateTime expiresAtUtc, string username)
         {
-            var jwtKey = configuration["Jwt:Key"] ?? "my_secret_key";
+            var jwtKey = configuration["JWT_KEY"] ?? "my_secret_key";
             var jwtIssuer = configuration["Jwt:Issuer"] ?? "forecast-api";
             var jwtAudience = configuration["Jwt:Audience"] ?? "forecast-api";
 
