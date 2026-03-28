@@ -18,8 +18,8 @@ export interface RefreshRequest {
 export interface AuthResponse {
   token: string;
   refreshToken: string;
-  expiresAtUtc: number; // in seconds
-  refreshTokenExpiresAtUtc: number; // in seconds
+  expiresAtUtc: string;
+  refreshTokenExpiresAtUtc: string;
 }
 
 @Injectable({
@@ -114,12 +114,12 @@ export class AuthService {
     }
 
     const refresh_token = this.getRefreshToken();
-    if (!token) {
+    if (!refresh_token) {
       return throwError(() => new Error('No refresh token stored'));
     }
 
     return this.http.post<AuthResponse>(this.apiConfig.refreshUrl(), <RefreshRequest> {
-      refreshToken: token
+      refreshToken: refresh_token
     }).pipe(
       tap(response => {
         this.handleSuccessfulAuthRequest(response)
@@ -133,30 +133,24 @@ export class AuthService {
   }
 
 
-  private storeAuthToken(token: string, expiresIn?: number): void {
-    this.storeExpiringCookie("auth_token", token, expiresIn)
+  private storeAuthToken(token: string, expiresAt: string): void {
+    this.storeExpiringCookie("auth_token", token, expiresAt)
   }
 
-  private storeRefreshToken(refreshToken: string, expiresIn?: number): void {
-    this.storeExpiringCookie("refresh_token", refreshToken, expiresIn)
+  private storeRefreshToken(refreshToken: string, expiresAt: string): void {
+    this.storeExpiringCookie("refresh_token", refreshToken, expiresAt)
   }
 
   /**
    * Store token in cookie with expiration
    */
-  private storeExpiringCookie(cookie: string, value: string, expiresIn?: number): void {
+  private storeExpiringCookie(cookie: string, value: string, expiresAt: string): void {
     // Store in cookie (httpOnly would be ideal but requires backend support)
     // We're storing in a secure cookie with expiration
-    const expirationDate = new Date();
-    if (expiresIn) {
-      expirationDate.setSeconds(expirationDate.getSeconds() + expiresIn);
-    } else {
-      // Default to 1 hour if not specified
-      expirationDate.setHours(expirationDate.getHours() + 1);
-    }
-    
+    const expiry = new Date(expiresAt)
+
     this.cookieService.set(cookie, value, {
-      expires: expirationDate,
+      expires: expiry,
       secure: this.apiConfig.useSecureCookies(),
       sameSite: 'Strict'
     });
@@ -167,6 +161,7 @@ export class AuthService {
    */
   private clearToken(): void {
     this.cookieService.delete('auth_token');
+    this.cookieService.delete('refresh_token');
   }
 
   /**
@@ -222,23 +217,23 @@ export class AuthService {
   /**
    * Schedule token refresh before expiration
    */
-  private scheduleTokenRefresh(expiresIn: number): void {
+  private scheduleTokenRefresh(expiresAt: string): void {
     // Clear any existing timeout
     if (this.refreshRefreshInterval) {
       clearTimeout(this.refreshRefreshInterval);
     }
 
+    const expiry = new Date(expiresAt)
+
     try {
-      const currentTimeInSeconds = Math.floor(Date.now() / 1000);
-      const timeUntilExpiry = (expiresIn - currentTimeInSeconds) * 1000; // convert to ms
+      const timeUntilExpiry = (expiry.getTime() - Date.now()); // in ms
 
       // Refresh at 80% of token lifetime or 1 minute before expiry, whichever is later
-      const refreshBuffer = Math.max(60 * 1000, timeUntilExpiry * 0.2);
+      const refreshBuffer = Math.min(60 * 1000, timeUntilExpiry * 0.2);
       const refreshTime = timeUntilExpiry - refreshBuffer;
 
       if (refreshTime > 0) {
         this.refreshRefreshInterval = setTimeout(() => {
-          console.log('Auto-refreshing token...');
           this.refreshToken().subscribe({
             error: (err) => console.error('Failed to refresh token:', err)
           });

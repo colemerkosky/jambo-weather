@@ -5,6 +5,7 @@
 
 .forecast-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
 }
 
@@ -48,6 +49,10 @@
   color: #666;
 }
 
+.error-message {
+  color: #c33;
+}
+
 .forecast-date-picker {
   display: flex;
   align-items: center;
@@ -58,6 +63,7 @@
 .forecast-date-picker label {
   font-weight: 600;
   color: #333;
+  white-space: nowrap;
 }
 
 .forecast-date-picker input {

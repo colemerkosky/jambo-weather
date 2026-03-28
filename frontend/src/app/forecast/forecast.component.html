@@ -18,7 +18,7 @@
         @if(loading()){
             <div class="status-message">Loading forecast data...</div>
         } @else if (error()){
-            <div class="status-message error-message">Error retrieving forecast data</div>
+            <div class="error-message">Error retrieving forecast data</div>
         } @else {
       <div class="forecast-row">
           @for(forecast of forecasts(); track forecast.date) {

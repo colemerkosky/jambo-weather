@@ -43,8 +43,6 @@ export class CityDataComponent {
     })
 
     getCountryEmojiFromCountryCode(countryCode: string) {
-        console.log(countryCode)
-
         if(!countryCode) {
           return null
         }
@@ -54,7 +52,7 @@ export class CityDataComponent {
 
         let codePoints = countryCode.toUpperCase().split('').map(char => flagToAsciiOffset + char.charCodeAt(0))
         let emoji = String.fromCodePoint(...codePoints)
-        console.log(emoji)
+
         return emoji
     }
 

@@ -1,6 +1,7 @@
 .dropdown-container {
   position: relative;
-  width: 250px;
+  width: fit-content;
+  min-width: 275px;
   margin: 20px 0;
 }
 
@@ -29,6 +30,7 @@
 .selected-text {
   font-weight: 500;
   color: #333;
+  padding-right: 10px;
 }
 
 .dropdown-arrow {

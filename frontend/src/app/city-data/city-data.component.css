@@ -35,12 +35,11 @@
   text-decoration: underline;
 }
 
-.city-data-missing {
-  background: #fff7f6;
-  color: #a94442;
-  border: 1px solid #f2dede;
-  border-radius: 8px;
-  padding: 18px;
-  max-width: 740px;
-  margin: 24px auto;
+.status-message {
+  color: #666;
 }
+
+.error-message{
+  color: #c33;
+}
+

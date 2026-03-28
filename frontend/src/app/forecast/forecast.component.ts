@@ -92,7 +92,6 @@ export class ForecastComponent {
 
   handleForecastsLoaded(data: ForecastData): void {
     this.forecasts.set(data.forecasts);
-    console.log(this.forecasts())
     this.loading.set(false);
     this.error.set(false);
   }
