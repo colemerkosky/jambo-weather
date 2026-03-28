@@ -15,27 +15,68 @@ export class ForecastComponent {
 
   forecasts = signal<Forecast[]>([]);
   selectedCityId = input.required<string>();
+  selectedDate = signal<string>(this.getTodayIso());
 
   loading = signal(true);
   error = signal(false);
 
   ngOnInit(): void {
+    this.resetDate();
     this.loadForecasts('current');
   }
 
   ngOnChanges({ selectedCityId }: SimpleChanges): void {
-    if(selectedCityId.currentValue != selectedCityId.previousValue && !selectedCityId.isFirstChange()){
-      this.loadForecasts(selectedCityId.currentValue)
+    const newCityId = selectedCityId.currentValue;
+    const oldCityId = selectedCityId.previousValue;
+
+    if (newCityId !== oldCityId) {
+      this.resetDate();
+      this.loadForecasts(newCityId);
+    }
+  }
+
+  getTodayIso(): string {
+    const now = new Date();
+    return now.toISOString().split('T')[0];
+  }
+
+  getDatePlusDays(days: number): string {
+    const dt = new Date();
+    dt.setDate(dt.getDate() + days);
+    return dt.toISOString().split('T')[0];
+  }
+
+  get minDate(): string {
+    return this.getTodayIso();
+  }
+
+  get maxDate(): string {
+    return this.getDatePlusDays(5);
+  }
+
+  resetDate(): void {
+    this.selectedDate.set(this.getTodayIso());
+  }
+
+  onDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const dateValue = input.value;
+
+    if (dateValue) {
+      this.selectedDate.set(dateValue);
+      this.loadForecasts(this.selectedCityId());
     }
   }
 
   loadForecasts(cityId: string): void {
     this.startLoading();
 
-    this.forecastService.getForecasts(cityId).subscribe({
-      next: (data) => this.handleForecastsLoaded(data),
-      error: () => this.onErrorLoading()
-    });
+    this.forecastService
+      .getForecasts(cityId, this.selectedDate())
+      .subscribe({
+        next: (data) => this.handleForecastsLoaded(data),
+        error: () => this.onErrorLoading()
+      });
   }
 
   startLoading(): void {

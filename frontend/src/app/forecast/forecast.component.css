@@ -3,6 +3,11 @@
   color: #333;
 }
 
+.forecast-header {
+    display: flex;
+    justify-content: space-between;
+}
+
 .forecast-row {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -41,4 +46,23 @@
 
 .status-message {
   color: #666;
+}
+
+.forecast-date-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.forecast-date-picker label {
+  font-weight: 600;
+  color: #333;
+}
+
+.forecast-date-picker input {
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  padding: 6px 8px;
+  background: #fff;
 }

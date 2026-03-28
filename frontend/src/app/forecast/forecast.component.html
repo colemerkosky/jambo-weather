@@ -1,10 +1,25 @@
 <div class="forecast">
-  @if(loading()){
-      <div class="status-message">Loading forecast data...</div>
-  } @else if (error()){
-      <div class="status-message">Error retrieving forecast data</div>
-  } @else {
+    <div class="forecast-header">
       <h2>Forecast</h2>
+      <div class="forecast-date-picker">
+        <label for="forecastDate">Forecast Date:</label>
+        <input
+          id="forecastDate"
+          type="date"
+          [min]="minDate"
+          [max]="maxDate"
+          [value]="selectedDate()"
+          (change)="onDateChange($event)"
+        />
+      </div>
+    </div>
+      
+
+        @if(loading()){
+            <div class="status-message">Loading forecast data...</div>
+        } @else if (error()){
+            <div class="status-message error-message">Error retrieving forecast data</div>
+        } @else {
       <div class="forecast-row">
           @for(forecast of forecasts(); track forecast.date) {
               <div class="forecast-item">
@@ -16,5 +31,5 @@
               </div>
           }
       </div>
-  }
+    }
 </div>

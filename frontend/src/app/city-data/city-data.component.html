@@ -6,7 +6,7 @@
     } @else {
 
     
-    <h2>{{ cityData().geolocation.cityName || 'Unknown City' }}</h2>
+    <h2>More info about {{ cityData().geolocation.cityName || 'Unknown City' }}</h2>
     <p>
         {{ cityData().blurb }} 
         <a class="learn-more" [href]="cityData().learnMoreUrl" target="_blank" rel="noopener noreferrer">
