@@ -1,4 +1,4 @@
 export const environment = {
     production: true,
-    baseUrl: 'https://my-prod-url'
+    baseUrl: 'https://jambo-backend-dhdjd0g4abhhexb2.canadacentral-01.azurewebsites.net'
 };
