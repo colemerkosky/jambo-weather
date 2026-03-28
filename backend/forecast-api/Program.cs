@@ -15,7 +15,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddScoped<IAuthenticationService, DummyAuthenticationService>();
 builder.Services.AddScoped<ICityService, InMemoryCityService>();
-builder.Services.AddScoped<IIPGeolocationService, IPAPI_IPGeolocationService>();
+builder.Services.AddSingleton<IIPGeolocationService, IPAPI_IPGeolocationService>();
 builder.Services.AddScoped<ICityDataService, WikipediaCityDataService>();
 builder.Services.AddScoped<IForecastService, OpenMeteoForecastService>();
 
@@ -28,7 +28,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         ValidateLifetime = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? ""))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? "")),
     };
 });
 
@@ -39,7 +39,6 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: LocalFrontendCorsPolicy, policy =>
     {
         policy.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().AllowCredentials();
-        // policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials();
     });
 });
 
@@ -52,11 +51,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors(LocalFrontendCorsPolicy);
-
 app.UseHttpsRedirection();
-
-
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
