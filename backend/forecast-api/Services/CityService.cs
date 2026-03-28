@@ -92,7 +92,7 @@ namespace forecast_api.Services
                 Geolocation = new Geolocation {
                     CityName = "Rio de Janeiro",
                     CountryCode = "BR",
-                    Timezone = "America/Sao_Paolo",
+                    Timezone = "America/Sao_Paulo",
                     Coordinates = new Coordinates { 
                         Latitude = -22.9068,
                         Longitude = -43.1729,

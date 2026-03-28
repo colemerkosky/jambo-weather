@@ -24,7 +24,7 @@ namespace forecast_api.Controllers
             return await GetForecast(geolocation, forecastDate);
         }
 
-        [HttpGet("/current")]
+        [HttpGet("current")]
         public async Task<IActionResult> GetForecastByIP(string cityId, [FromQuery] DateOnly? forecastDate)
         {
             var ipAddress = HttpContext.GetIpAddress() ?? configuration["FallbackIPAddress"];
