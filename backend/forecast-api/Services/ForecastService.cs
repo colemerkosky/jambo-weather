@@ -30,10 +30,12 @@ namespace forecast_api.Services
         {
             var coords = geolocation.Coordinates;
 
+            client.Timeout = TimeSpan.FromSeconds(20);
+
             var url = new StringBuilder("https://api.open-meteo.com/v1/forecast")
                 .Append($"?latitude={coords.Latitude}&longitude={coords.Longitude}")
                 .Append($"&daily=temperature_2m_max,temperature_2m_min") // Get the daily high and low temperatures
-                .Append($"&start_date={date}&end_date={date.AddDays(7)}") // Get a week of forecast data
+                .Append($"&start_date={date.ToString("yyyy-MM-dd")}&end_date={date.AddDays(7).ToString("yyyy-MM-dd")}") // Get a week of forecast data
                 .Append($"&timezone={geolocation.Timezone}") // Get in the specific timezone for this geolocation data
                 .ToString();
             

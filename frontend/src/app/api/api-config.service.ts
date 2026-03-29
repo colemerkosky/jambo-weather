@@ -12,7 +12,7 @@ export class ApiConfigService {
    * The base server URL for API data calls
    * Default: http://localhost:3000
    */
-  baseUrl = signal('https://localhost:7421/api');
+  baseUrl = signal('https://localhost:7241/api');
 
   /**
    * The URL for the login endpoint

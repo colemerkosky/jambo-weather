@@ -1,59 +1,91 @@
-# ForecastApp
+# Deployed Version
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.3.
+A deployed version of the app can be found here: https://wonderful-moss-08ebe3c1e.2.azurestaticapps.net/
 
-## Development server
+# Backend
 
-To start a local development server, run:
+## Requirements
+- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) installed
 
-```bash
-ng serve
-```
+## Running the backend
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Create a key for use for JWT signing. For development environments, this key can be anything long enough to meet the 256-bit key requirement
 
 ```bash
-ng generate component component-name
+export JWT_KEY=my_super_secret_secure_eg_key_signing_key
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Starting from the root folder, run the following commands:
 
 ```bash
-ng generate --help
+cd backend/forecast-api
+dotnet run
 ```
 
-## Building
+This will start up a local backend, running on `https://localhost:7241`
 
-To build the project run:
+### Running tests
+
+To run the test, once again starting from the root folder, run the following commands:
 
 ```bash
-ng build
+cd backend
+dotnet test
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Note, the `JWT_KEY` environment variable is still needed to run the test suite (in particular, for integration tests)
 
-## Running unit tests
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+# Frontend
+
+## Requirements
+- Angular v21.2.3
+- Node v25.8.2
+- Backend previously started
+
+## Running the frontend
+
+Starting from the root folder, run the following commands:
 
 ```bash
-ng test
+cd frontend
+npm start
 ```
 
-## Running end-to-end tests
+This will start up a local frontend, running on `http://localhost:4200/`
 
-For end-to-end (e2e) testing, run:
+# Usage
 
-```bash
-ng e2e
-```
+1. Navigate to the frontend start page at http://localhost:4200/
+2. Login to the application
+    * The current login logic is very simple - any username is accepted, so long as the password matches a simple hardcoded value - `Sup3rSe_cr3tP@ssw0rd`
+3. You will be taken to the main page. The app will by default use your current IP address to fetch your current location and display the results
+    * In development, this IP address lookup won't resolve properly as the request isn't coming in over the internet.
+    * Instead, there is a configuration value called `FallbackIPAddress` set in `backend/forecast-api/appsettings.json`. This is by default set to be an IP address in Toronto, but it can be changed to any other IP address you like to try out different geolocation functionality
+        * If this is changed, you must restart the backend
+4. You can optionally select from a limited set of avaialable cities to see info and forecast data about them as well
+5. You can optionally select the date for which you want to receive forecasts by using the date picker. 
+    * You can select dates up to 5 days in the future
+    * The app will return 8 days of forecast data
+6. Logging out can be done by clicking the "Logout" button in the top right corner
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+# Known Limitations
 
-## Additional Resources
+* Due to the reliance on external systems for data (and remaining on free usage plans for most of the APIs), this loading of data can be slow or error-prone
+    * The API used for geolocation of IP address will occasionally send a 429 Too Many Requests
+        * A rudimentary caching system has been put in place to get around this, but it has its own limitations (e.g. thread safety)
+    * The API used for fetching forecast data can be very slow to respond, and will sometimes timeout
+        * This is particularly notable in the deployed service. Further investigation is needed to determine why.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+* Due to the nature of how Wikipedia queries are made, if the geo-located city name can't be used in the query, the "City Data" requests will fail.
+
+* The auth service is very limited, given that the password is a hardcoded dummy value that is the same for every user. The whole system could be fleshed out in the future, including proper password storage/federation, blacklisting logged out tokens, etc
+    * Generally speaking, even hosting the auth provider within the same app is not ideal.
+
+* The scope of available cities in the dropdown is also small, and hardcoded into the system. This would mean more cities needed to be added in the future, and that doing so would be tricky.
+
+# AI Agent Disclosure
+
+Copilot with Claude Haiku v4.5 was used for code generation, in particular for good chunks of the frontend
+
+However, it did not do a _great_ job, and a lot of the code needed thorough review and manual cleanup. As a result, there is very little code in the repo that was written exclusively by agents
